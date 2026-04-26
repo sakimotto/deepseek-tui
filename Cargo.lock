@@ -999,8 +999,12 @@ dependencies = [
  "deepseek-execpolicy",
  "deepseek-mcp",
  "deepseek-state",
+ "dirs",
+ "serde",
  "serde_json",
+ "tempfile",
  "tokio",
+ "tracing",
 ]
 
 [[package]]

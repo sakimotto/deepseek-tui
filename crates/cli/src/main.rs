@@ -1,3 +1,5 @@
+mod metrics;
+
 use std::io::{self, Read};
 use std::net::SocketAddr;
 use std::path::PathBuf;
@@ -135,6 +137,18 @@ enum Commands {
         #[arg(value_enum)]
         shell: Shell,
     },
+    /// Print a usage rollup from the audit log and session store.
+    Metrics(MetricsArgs),
+}
+
+#[derive(Debug, Args)]
+struct MetricsArgs {
+    /// Emit machine-readable JSON.
+    #[arg(long)]
+    json: bool,
+    /// Restrict to events newer than this duration (e.g. 7d, 24h, 30m, now-2h).
+    #[arg(long, value_name = "DURATION")]
+    since: Option<String>,
 }
 
 #[derive(Debug, Args)]
@@ -392,6 +406,7 @@ fn run() -> Result<()> {
             generate(shell, &mut cmd, "deepseek", &mut io::stdout());
             Ok(())
         }
+        Some(Commands::Metrics(args)) => run_metrics_command(args),
         None => {
             let mut forwarded = Vec::new();
             if let Some(prompt) = cli.prompt.clone() {
@@ -865,6 +880,19 @@ fn delegate_simple_tui(args: Vec<String>) -> Result<()> {
     }
 }
 
+fn run_metrics_command(args: MetricsArgs) -> Result<()> {
+    let since = match args.since.as_deref() {
+        Some(s) => {
+            Some(metrics::parse_since(s).with_context(|| format!("invalid --since value: {s:?}"))?)
+        }
+        None => None,
+    };
+    metrics::run(metrics::MetricsArgs {
+        json: args.json,
+        since,
+    })
+}
+
 fn read_api_key_from_stdin() -> Result<String> {
     let mut input = String::new();
     io::stdin()
@@ -1234,6 +1262,7 @@ mod tests {
             "sandbox",
             "app-server",
             "completion",
+            "metrics",
             "--provider",
             "--model",
             "--config",
@@ -1279,6 +1308,7 @@ mod tests {
                 vec!["--host", "--port", "--config", "--stdio"],
             ),
             ("completion", vec!["<SHELL>", "bash"]),
+            ("metrics", vec!["--json", "--since"]),
         ];
 
         for (subcommand, expected_tokens) in cases {
