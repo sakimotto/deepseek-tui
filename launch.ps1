@@ -45,18 +45,18 @@ Write-Host ""
 $modelChoice = Read-Host "  Enter A, P, or F"
 
 if ($modelChoice -eq "P" -or $modelChoice -eq "p") {
-    $modelArg = "--model deepseek-v4-pro"
+    $modelName = "deepseek-v4-pro"
 } elseif ($modelChoice -eq "F" -or $modelChoice -eq "f") {
-    $modelArg = "--model deepseek-v4-flash"
+    $modelName = "deepseek-v4-flash"
 } else {
-    $modelArg = "--model auto"
+    $modelName = "auto"
 }
 
 Write-Host ""
 Write-Host "  ========================================" -ForegroundColor Green
 Write-Host "  Launching DeepSeek TUI"                    -ForegroundColor Green
 Write-Host "    Mode:    $modeArg"                        -ForegroundColor White
-Write-Host "    Model:   $modelArg"                       -ForegroundColor White
+Write-Host "    Model:   --model $modelName"                 -ForegroundColor White
 if ($useDocker) {
     Write-Host "    Runtime: Docker (sandboxed)"           -ForegroundColor White
 } else {
@@ -65,6 +65,9 @@ if ($useDocker) {
 Write-Host "  ========================================" -ForegroundColor Green
 Write-Host ""
 
+$cliArgs = @('--model', $modelName)
+if ($modeArg) { $cliArgs += $modeArg }
+
 if ($useDocker) {
     docker run --rm -it `
         --env-file "$projectDir\.env" `
@@ -72,7 +75,7 @@ if ($useDocker) {
         -v "${projectDir}:/workspace" `
         -w /workspace `
         ghcr.io/hmbown/deepseek-tui:latest `
-        deepseek $modelArg $modeArg
+        deepseek $cliArgs
 } else {
-    & deepseek $modelArg $modeArg
+    & deepseek $cliArgs
 }
