@@ -337,6 +337,18 @@ not exposed through ACP yet.
 
 Full shortcut catalog: [docs/KEYBINDINGS.md](docs/KEYBINDINGS.md).
 
+### Interactive Launcher (Team Quick-Start)
+
+For teams, this repo includes `launch.ps1` — a PowerShell picker that asks three
+questions and launches with the right flags. No commands to memorize:
+
+```powershell
+.\launch.ps1
+```
+
+Double-click `launch.bat` for the same experience. See [docs/TEAM_GUIDE.md](docs/TEAM_GUIDE.md)
+for full team setup instructions, lessons learned, and troubleshooting.
+
 ---
 
 ## Modes
@@ -434,6 +446,8 @@ Commands: `/skills` (list), `/skill <name>` (activate), `/skill new` (scaffold),
 | [MEMORY.md](docs/MEMORY.md) | User memory feature guide |
 | [SUBAGENTS.md](docs/SUBAGENTS.md) | Sub-agent role taxonomy and lifecycle |
 | [KEYBINDINGS.md](docs/KEYBINDINGS.md) | Full shortcut catalog |
+| [TOOL_SURFACE.md](docs/TOOL_SURFACE.md) | Full tool catalog |
+| [TEAM_GUIDE.md](docs/TEAM_GUIDE.md) | Team setup, launcher, lessons learned |
 | [RELEASE_RUNBOOK.md](docs/RELEASE_RUNBOOK.md) | Release process |
 | [LOCALIZATION.md](docs/LOCALIZATION.md) | UI locale matrix & switching |
 | [OPERATIONS_RUNBOOK.md](docs/OPERATIONS_RUNBOOK.md) | Ops & recovery |
