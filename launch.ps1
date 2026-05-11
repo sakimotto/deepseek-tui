@@ -1,11 +1,13 @@
 # DeepSeek TUI Launcher - pick your setup and go
-$projectDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-Set-Location $projectDir
+# Works from ANY folder. Just run: powershell -File "path\to\launch.ps1"
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$currentDir = Get-Location
 
 Write-Host ""
 Write-Host "  ========================================" -ForegroundColor Cyan
 Write-Host "       DeepSeek TUI Launcher"               -ForegroundColor Cyan
 Write-Host "  ========================================" -ForegroundColor Cyan
+Write-Host "  Workspace: $currentDir"                   -ForegroundColor DarkGray
 Write-Host ""
 
 Write-Host "  Pick a mode:" -ForegroundColor Yellow
@@ -82,11 +84,16 @@ if (Test-Path $deepseekExe) {
     $deepseekCmd = $deepseekAlt
 }
 
+$envFile = "$scriptDir\.env"
+if (-not (Test-Path $envFile)) {
+    $envFile = "$currentDir\.env"
+}
+
 if ($useDocker) {
     docker run --rm -it `
-        --env-file "$projectDir\.env" `
+        --env-file "$envFile" `
         -v "$env:USERPROFILE\.deepseek:/home/deepseek/.deepseek" `
-        -v "${projectDir}:/workspace" `
+        -v "${currentDir}:/workspace" `
         -w /workspace `
         ghcr.io/hmbown/deepseek-tui:latest `
         deepseek $cliArgs

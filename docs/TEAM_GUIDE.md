@@ -102,31 +102,40 @@ If you see **"API connection successful"**, you're ready. If not, check the [Tro
 
 ## Step 4: Clone the Team Launcher Repo
 
+Clone this anywhere — once only:
+
 ```powershell
 git clone https://github.com/sakimotto/deepseek-tui.git
-cd deepseek-tui
 ```
 
 This gives you:
-- `launch.ps1` — Interactive picker script
+- `launch.ps1` — Interactive picker (works from ANY project folder)
 - `launch.bat` — Double-click shortcut
-- `.env.example` — Environment template (copy to `.env` if you prefer env vars)
+- `.env.example` — Environment template
 - `docs/TEAM_GUIDE.md` — This guide
 
 ---
 
-## Step 5: Launch
+## Step 5: Launch (in YOUR project)
+
+### The workflow — every time
+
+```powershell
+# 1. Go to YOUR project (whatever you're working on)
+cd C:\Users\YOU\Projects\my-app
+
+# 2. Launch DeepSeek TUI — either way:
+deepseek --model auto                           # Quick way, no menu
+powershell -File C:\path\to\deepseek-tui\launch.ps1   # Full menu picker
+```
+
+The launcher now works from **any folder**. It shows which workspace you're in
+at the top, so you always know which project the agent sees.
 
 ### Easy way (recommended)
 
-Double-click **`launch.bat`** in the project folder.
-
-### PowerShell way
-
-```powershell
-cd path\to\deepseek-tui
-.\launch.ps1
-```
+Navigate to any project in File Explorer, then double-click `launch.bat`
+from wherever you saved it. The TUI opens with that project as the workspace.
 
 You'll see three simple questions:
 
@@ -179,6 +188,32 @@ what can you help me with?
 ```
 list all the files in the src directory
 ```
+
+---
+
+## Working With a New Git Repo (Your Actual Projects)
+
+This is the most common workflow — clone a repo, then use DeepSeek inside it:
+
+```powershell
+# 1. Go to your projects folder
+cd C:\Users\YOU\Projects
+
+# 2. Clone the repo (use YOUR repo URL)
+git clone https://github.com/YOUR-ORG/your-project.git
+
+# 3. Go inside it
+cd your-project
+
+# 4. Launch DeepSeek (either way)
+deepseek --model auto
+# OR: powershell -File C:\path\to\deepseek-tui\launch.ps1
+```
+
+The TUI now sees everything in `your-project` and can work on it.
+
+> **Key point:** Always `cd` into the project folder FIRST, then launch.
+> DeepSeek TUI works on whatever folder you're currently in.
 
 ---
 
@@ -238,17 +273,21 @@ list all the files in the src directory
 
 ## Daily Workflow
 
+**Every time you want to work on a project:**
+
 ```powershell
-# 1. Navigate to your project
-cd your-project-folder
+# 1. Go to your project
+cd C:\Users\YOU\Projects\your-project
 
-# 2. Launch with the launcher (or just deepseek)
-deepseek --model auto
+# 2. Launch (pick ONE)
+deepseek --model auto                                # Quick — no menu
+powershell -File C:\path\to\deepseek-tui\launch.ps1   # Full menu picker
 
-# 3. Ask the agent things
-@src/main.rs explain this module
-refactor this function for better performance
-write tests for the UserService class
+# 3. Ask the agent — examples:
+@README.md explain this project structure
+add a new API endpoint for user profile
+fix the bug in src/auth/login.ts
+write tests for the payment module
 ```
 
 ### Useful slash commands
