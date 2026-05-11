@@ -1,51 +1,134 @@
-# DeepSeek TUI - Team Setup Guide
+# DeepSeek TUI — Team Setup Guide
 
-Quick-start guide for our development team. One launcher, three choices, zero command memorization.
+> **One launcher, three choices, zero commands to memorize.**
+> Follow these steps exactly and you'll be coding with DeepSeek V4 in 10 minutes.
 
 ---
 
-## 5-Minute Setup (Windows)
+## Before You Start
 
-### Step 1: Install
+You need these on your PC:
 
-Open **PowerShell** as administrator and run:
+| Requirement | How to check | Install if missing |
+|---|---|---|
+| **Windows 10/11 (x64)** | `winver` in Start menu | — |
+| **Node.js 18+** | `node --version` in PowerShell | https://nodejs.org (LTS) |
+| **Git** | `git --version` in PowerShell | https://git-scm.com/download/win |
+| **PowerShell 5.1+** | Built into Windows | — |
+| **Docker Desktop** *(optional, for YOLO sandbox)* | `docker --version` | https://www.docker.com/products/docker-desktop/ |
+
+Quick check — open PowerShell and run:
+
+```powershell
+node --version
+git --version
+```
+
+Both should print a version number (e.g. `v20.11.0`). If either says "not recognized", install it from the links above.
+
+---
+
+## Step 1: Install DeepSeek TUI
+
+Open **PowerShell** (right-click Start → Windows PowerShell) and run:
 
 ```powershell
 npm install -g deepseek-tui
 ```
 
-Verify:
+Wait for the download to finish (it pulls the Rust binaries — about 50 MB). Then verify:
+
 ```powershell
 deepseek --version
 ```
 
-### Step 2: Get Your API Key
+You should see something like:
 
-1. Go to https://platform.deepseek.com/api_keys
-2. Create a key (or ask your team lead for one)
-3. Save it with the CLI:
+```
+deepseek (npm wrapper) v0.8.28
+binary version: v0.8.28
+```
+
+> **China users:** if npm is slow, add `--registry=https://registry.npmmirror.com` to the install command.
+
+---
+
+## Step 2: Get Your API Key
+
+You need a DeepSeek API key to use the agent. There are two ways:
+
+### Option A: Team lead gives you a key
+
+Your team lead will provide a key. Once you have it:
+
 ```powershell
 deepseek auth set --provider deepseek
 ```
 
-### Step 3: Clone This Repo
+Paste the key when prompted. It's saved securely to `C:\Users\YOU\.deepseek\config.toml`.
+
+### Option B: Create your own key
+
+1. Go to https://platform.deepseek.com/api_keys
+2. Sign up / log in
+3. Click **Create new API key**
+4. Copy the key (starts with `sk-`)
+5. Run `deepseek auth set --provider deepseek` and paste it
+
+> **Never share your key** — it is tied to your billing account.
+
+---
+
+## Step 3: Verify Everything Works
+
+```powershell
+deepseek doctor
+```
+
+You should see:
+
+```
+API Connectivity:
+  provider: deepseek
+  base_url: https://api.deepseek.com/beta
+  model: deepseek-v4-pro
+  Testing connection...
+  API connection successful
+```
+
+If you see **"API connection successful"**, you're ready. If not, check the [Troubleshooting](#troubleshooting) section below.
+
+---
+
+## Step 4: Clone the Team Launcher Repo
 
 ```powershell
 git clone https://github.com/sakimotto/deepseek-tui.git
 cd deepseek-tui
 ```
 
-### Step 4: Launch
-
-```powershell
-.\launch.ps1
-```
+This gives you:
+- `launch.ps1` — Interactive picker script
+- `launch.bat` — Double-click shortcut
+- `.env.example` — Environment template (copy to `.env` if you prefer env vars)
+- `docs/TEAM_GUIDE.md` — This guide
 
 ---
 
-## The Launcher - Pick Your Setup
+## Step 5: Launch
 
-When you run `.\launch.ps1`, you get three simple choices:
+### Easy way (recommended)
+
+Double-click **`launch.bat`** in the project folder.
+
+### PowerShell way
+
+```powershell
+cd path\to\deepseek-tui
+.\launch.ps1
+```
+
+You'll see three simple questions:
 
 ```
   ========================================
@@ -57,33 +140,69 @@ When you run `.\launch.ps1`, you get three simple choices:
     2. Agent  - Interactive, asks before running
     3. YOLO   - Auto-approve everything (use Docker)
 
+  Enter 1, 2, or 3
+
   Pick runtime:
     N. Native  - Instant, no Docker needed
     D. Docker  - Sandboxed, safe for YOLO
 
+  Enter N or D
+
   Pick a model:
     A. Auto   - Let DeepSeek choose per turn
     P. Pro    - deepseek-v4-pro (best quality)
-    F. Flash  - deepseek-v4-flash (fast and cheap)
+    F. Flash  - deepseek-v4-flash (fast & cheap)
+
+  Enter A, P, or F
 ```
+
+| You pick | What you get |
+|----------|-------------|
+| `2` `N` `A` | **Agent mode, native, auto model** — best for daily work |
+| `1` `N` `A` | Agent mode then press Tab for Plan — safe exploration |
+| `3` `D` `P` | YOLO mode, Docker sandbox, Pro model — full autonomy |
+
+---
+
+## First Run: Try These
+
+Once the TUI opens, type these to get a feel for it:
+
+```
+what can you help me with?
+```
+
+```
+@README.md summarize this project
+```
+
+```
+list all the files in the src directory
+```
+
+---
+
+## The Launcher — Quick Reference
 
 | What you pick | What happens |
 |---------------|-------------|
-| 1 + N + A | Plan mode (Agent, press Tab in TUI), native, auto model - safe exploration |
-| 2 + N + A | Agent mode, native, auto model - daily development |
-| 3 + D + P | YOLO mode, Docker sandboxed, Pro model - full autonomy |
+| 1 + N + A | Agent mode, press Tab for Plan — safe exploration |
+| 2 + N + A | Agent mode, native, auto model — daily development |
+| 2 + N + P | Agent mode, native, Pro model — best quality for complex tasks |
+| 3 + D + P | YOLO mode, Docker sandboxed, Pro model — full autonomy |
 
 ---
 
 ## Modes Explained
 
-| Mode | Best for | Safety |
-|------|----------|--------|
-| **Plan** | Exploring code, asking questions, architecture review | Read-only (press Tab to switch) |
-| **Agent** | Day-to-day coding with review | Asks before running tools (default) |
-| **YOLO** | Full automation, batch tasks | Auto-approves everything |
+| Mode | What it does | Safety |
+|------|-------------|--------|
+| **Plan** | Reads code, answers questions, proposes plans. Cannot edit files. | 100% safe |
+| **Agent** | Reads and edits code. Asks you before running shell commands. | Safe with review |
+| **YOLO** | Reads, edits, runs commands — all auto-approved. | Needs Docker sandbox! |
 
-> Always use **Docker** runtime with YOLO mode. Docker provides a landlock sandbox that prevents destructive commands from affecting your system.
+> **Cycle modes inside the TUI:** Press `Tab` to switch Plan → Agent → YOLO.
+> **Cycle reasoning effort:** Press `Shift+Tab` for off → high → max thinking.
 
 ---
 
@@ -91,12 +210,12 @@ When you run `.\launch.ps1`, you get three simple choices:
 
 | | Native | Docker |
 |---|--------|--------|
-| Startup | Instant | Needs Docker Desktop running |
-| Sandbox | None | Linux landlock isolation |
-| Best for | Plan / Agent mode | YOLO mode |
-| Windows path | `deepseek` | `docker run --rm -it ...` |
+| **Startup** | Instant (`deepseek`) | Needs Docker Desktop running |
+| **Sandbox** | None | Linux landlock isolation |
+| **Best for** | Agent / Plan mode | YOLO mode |
+| **Setup** | Nothing extra | Install Docker Desktop |
 
-To use Docker mode, install [Docker Desktop](https://www.docker.com/products/docker-desktop/) first.
+> **Rule of thumb:** Use Native 95% of the time. Only use Docker when you need YOLO mode and want sandbox protection.
 
 ---
 
@@ -104,61 +223,158 @@ To use Docker mode, install [Docker Desktop](https://www.docker.com/products/doc
 
 | Key | Action |
 |-----|--------|
-| `Tab` | Cycle mode (Plan -> Agent -> YOLO) |
-| `Shift+Tab` | Cycle reasoning effort (off -> high -> max) |
-| `F1` | Help overlay |
+| `Tab` | Cycle mode (Plan → Agent → YOLO) |
+| `Shift+Tab` | Cycle reasoning effort (off → high → max) |
+| `F1` | Searchable help overlay |
+| `Esc` | Back / dismiss dialogs |
 | `Ctrl+K` | Command palette |
-| `Ctrl+R` | Resume previous session |
+| `Ctrl+R` | Resume a previous session |
+| `Alt+R` | Search prompt history |
 | `Ctrl+S` | Stash current draft |
-| `Esc` | Back / dismiss |
-| `@path` | Attach file/directory as context |
+| `@path` | Attach file/folder as context |
+| `Ctrl+C` | Exit the TUI |
 
 ---
 
-## Team Tips
+## Daily Workflow
 
-### Daily workflow
 ```powershell
-cd your-project
-deepseek
+# 1. Navigate to your project
+cd your-project-folder
+
+# 2. Launch with the launcher (or just deepseek)
+deepseek --model auto
+
+# 3. Ask the agent things
+@src/main.rs explain this module
+refactor this function for better performance
+write tests for the UserService class
 ```
-Then ask: `@README.md explain this to me` or `refactor this function for performance`
 
-### Cost management
-- Use `/model auto` to let DeepSeek choose Flash (cheap) vs Pro (powerful) per turn
-- Flash costs ~$0.14/M input, Pro costs ~$0.435/M input
-- Monitor costs in the TUI footer
+### Useful slash commands
 
-### Session persistence
-- Sessions auto-save to `~\.deepseek\`
-- Resume with `Ctrl+R` or `deepseek --continue`
-- Sessions survive restarts
+Type `/` inside the TUI to access:
 
-### Troubleshooting
-```powershell
-deepseek doctor          # Check everything is working
-deepseek auth status     # See where your key is stored
-deepseek --version       # Check version
-```
+| Command | What it does |
+|---------|-------------|
+| `/model auto` | Let DeepSeek pick Flash/Pro per turn |
+| `/model deepseek-v4-flash` | Force cheap model |
+| `/compact` | Free up context if things get slow |
+| `/help` | Show help |
+| `/stash` | Manage stashed drafts |
 
 ---
 
-## Lessons Learned
+## Docker Setup (Optional — for YOLO sandbox)
 
-1. **Start with Plan mode** - explore unfamiliar code safely before editing
-2. **Use @mentions** - attach files for context (`@src/main.rs summarize this`)
-3. **Auto model works well** - the routing call picks the right model 90% of the time
-4. **Docker for YOLO only** - the sandbox overhead isn't worth it for daily Agent mode
-5. **Session saves are your friend** - if the terminal crashes, your work is safe
-6. **Reasoning visibility** - press Shift+Tab to see the model think through complex problems
-7. **API key rotation** - use `deepseek auth set` to change keys, never edit config.toml manually
+If you want the sandboxed YOLO experience:
+
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/)
+2. Start Docker Desktop (wait for the whale icon to stop animating)
+3. In the launcher, pick `3` (YOLO) and `D` (Docker)
+
+The first Docker launch will pull the image (~40 MB). Subsequent launches are instant.
+
+---
+
+## Troubleshooting
+
+### "deepseek is not recognized"
+
+npm global packages aren't on your PATH. Fix:
+
+```powershell
+# Find where npm puts global packages
+npm config get prefix
+
+# Add to PATH (replace %USERPROFILE% with your actual path if different)
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:APPDATA\npm", "User")
+
+# Restart PowerShell
+```
+
+### "API connection failed" in deepseek doctor
+
+1. Check your key: `deepseek auth status`
+2. Re-enter your key: `deepseek auth set --provider deepseek`
+3. Check your internet connection
+4. If behind a corporate proxy, set `SSL_CERT_FILE` environment variable
+
+### "the term .\launch.ps1 is not recognized"
+
+You're not in the right folder. Run:
+
+```powershell
+cd "path\to\deepseek-tui"
+.\launch.ps1
+```
+
+Or double-click `launch.bat` instead.
+
+### The TUI looks garbled or colors are wrong
+
+- Use **Windows Terminal** (free from Microsoft Store) instead of the old PowerShell console
+- If using the old console, run `deepseek --no-mouse-capture`
+
+### "EPERM: operation not permitted" during npm install
+
+Close VS Code and any program that might hold files in `%APPDATA%\npm`, then re-run the install.
+
+### "error: unexpected argument '--model auto --plan' found"
+
+Make sure you have the latest `launch.ps1` from this repo:
+
+```powershell
+git pull
+```
+
+Then run `.\launch.ps1` again. This bug was fixed in the latest version.
+
+---
+
+## Cost Management
+
+| Model | Input (per 1M tokens) | Output (per 1M tokens) |
+|-------|----------------------|------------------------|
+| `deepseek-v4-flash` | $0.14 | $0.28 |
+| `deepseek-v4-pro` | $0.435* | $0.87* |
+
+*\*Current Pro rates include a 75% discount valid until 31 May 2026.*
+
+- Use **auto model** — it routes simple queries to Flash and complex ones to Pro
+- Monitor costs in the TUI footer bar
+- The TUI shows per-turn and session-level costs with cache hit/miss breakdowns
+
+---
+
+## Session Management
+
+Your conversations are saved automatically:
+
+- **Location:** `C:\Users\YOU\.deepseek\`
+- **Resume:** Press `Ctrl+R` in the TUI, or run `deepseek --continue`
+- **List sessions:** `deepseek sessions`
+- **Resume specific:** `deepseek resume <SESSION_ID>`
+
+Sessions survive reboots, crashes, and restarts.
+
+---
+
+## Team Best Practices
+
+1. **Start every complex task with Plan mode** — explore first, edit later
+2. **Use `@filename` mentions** — give the agent file context for better answers
+3. **Auto model is your friend** — let the router pick Flash vs Pro per turn
+4. **Never commit `.env` files** — they're gitignored, keep them that way
+5. **Rotate keys regularly** — `deepseek auth set --provider deepseek` makes it easy
+6. **Compact long sessions** — type `/compact` when the agent gets slow
+7. **Ask for explanations** — the agent is great at explaining code, not just writing it
 
 ---
 
 ## For Team Leads
 
-- Distribute API keys via environment or `deepseek auth set`
-- Pre-configure `.env` files per project (never commit them!)
-- Consider using `deepseek serve --http` for headless CI/CD agent workflows
-- See [docs/TOOL_SURFACE.md](docs/TOOL_SURFACE.md) for the full tool catalog
-- See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for internals
+- Distribute API keys via `deepseek auth set` (one-time per user)
+- This repo contains the launcher and docs only — each team member installs `deepseek` separately via npm
+- Consider pre-configuring a project `.env` file with non-secret settings (never include keys!)
+- The `deepseek serve --http` command enables headless agent workflows for CI/CD
