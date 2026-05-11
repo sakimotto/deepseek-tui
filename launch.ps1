@@ -9,15 +9,13 @@ Write-Host "  ========================================" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "  Pick a mode:" -ForegroundColor Yellow
-Write-Host "    1. Plan   - Read-only, explore only"
+Write-Host "    1. Plan   - Read-only, explore only (Tab to cycle in TUI)"
 Write-Host "    2. Agent  - Interactive, asks before running"
 Write-Host "    3. YOLO   - Auto-approve everything (use Docker)"
 Write-Host ""
 $modeChoice = Read-Host "  Enter 1, 2, or 3"
 
-if ($modeChoice -eq "1") {
-    $modeArg = "--plan"
-} elseif ($modeChoice -eq "3") {
+if ($modeChoice -eq "3") {
     $modeArg = "--yolo"
 } else {
     $modeArg = ""
@@ -55,7 +53,13 @@ if ($modelChoice -eq "P" -or $modelChoice -eq "p") {
 Write-Host ""
 Write-Host "  ========================================" -ForegroundColor Green
 Write-Host "  Launching DeepSeek TUI"                    -ForegroundColor Green
-Write-Host "    Mode:    $modeArg"                        -ForegroundColor White
+if ($modeChoice -eq "1") {
+    Write-Host "    Mode:    Agent (press Tab for Plan)"     -ForegroundColor White
+} elseif ($modeChoice -eq "3") {
+    Write-Host "    Mode:    YOLO"                           -ForegroundColor White
+} else {
+    Write-Host "    Mode:    Agent"                          -ForegroundColor White
+}
 Write-Host "    Model:   --model $modelName"                 -ForegroundColor White
 if ($useDocker) {
     Write-Host "    Runtime: Docker (sandboxed)"           -ForegroundColor White
@@ -68,6 +72,16 @@ Write-Host ""
 $cliArgs = @('--model', $modelName)
 if ($modeArg) { $cliArgs += $modeArg }
 
+$deepseekExe = "$env:APPDATA\npm\node_modules\deepseek-tui\bin\downloads\deepseek.exe"
+$deepseekAlt = "$env:APPDATA\npm\deepseek.cmd"
+$deepseekCmd = "deepseek"
+
+if (Test-Path $deepseekExe) {
+    $deepseekCmd = $deepseekExe
+} elseif (Test-Path $deepseekAlt) {
+    $deepseekCmd = $deepseekAlt
+}
+
 if ($useDocker) {
     docker run --rm -it `
         --env-file "$projectDir\.env" `
@@ -77,5 +91,5 @@ if ($useDocker) {
         ghcr.io/hmbown/deepseek-tui:latest `
         deepseek $cliArgs
 } else {
-    & deepseek $cliArgs
+    & $deepseekCmd $cliArgs
 }

@@ -53,7 +53,7 @@ When you run `.\launch.ps1`, you get three simple choices:
   ========================================
 
   Pick a mode:
-    1. Plan   - Read-only, explore only
+    1. Plan   - Read-only, explore only (press Tab in TUI)
     2. Agent  - Interactive, asks before running
     3. YOLO   - Auto-approve everything (use Docker)
 
@@ -69,7 +69,7 @@ When you run `.\launch.ps1`, you get three simple choices:
 
 | What you pick | What happens |
 |---------------|-------------|
-| 1 + N + A | Plan mode, native, auto model - safe exploration |
+| 1 + N + A | Plan mode (Agent, press Tab in TUI), native, auto model - safe exploration |
 | 2 + N + A | Agent mode, native, auto model - daily development |
 | 3 + D + P | YOLO mode, Docker sandboxed, Pro model - full autonomy |
 
@@ -79,8 +79,8 @@ When you run `.\launch.ps1`, you get three simple choices:
 
 | Mode | Best for | Safety |
 |------|----------|--------|
-| **Plan** | Exploring code, asking questions, architecture review | Read-only, no changes |
-| **Agent** | Day-to-day coding with review | Asks before running tools |
+| **Plan** | Exploring code, asking questions, architecture review | Read-only (press Tab to switch) |
+| **Agent** | Day-to-day coding with review | Asks before running tools (default) |
 | **YOLO** | Full automation, batch tasks | Auto-approves everything |
 
 > Always use **Docker** runtime with YOLO mode. Docker provides a landlock sandbox that prevents destructive commands from affecting your system.
