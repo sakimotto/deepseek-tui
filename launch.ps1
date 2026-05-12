@@ -67,12 +67,6 @@ Write-Host "    3. YOLO   - Auto-approve everything (use Docker)"
 Write-Host ""
 $modeChoice = Read-Host "  Enter 1, 2, or 3"
 
-if ($modeChoice -eq "3") {
-    $modeArg = "--yolo"
-} else {
-    $modeArg = ""
-}
-
 Write-Host ""
 Write-Host "  Pick runtime:" -ForegroundColor Yellow
 Write-Host "    N. Native  - Instant, no Docker needed"
@@ -84,6 +78,12 @@ if ($runtimeChoice -eq "D" -or $runtimeChoice -eq "d") {
     $useDocker = $true
 } else {
     $useDocker = $false
+}
+
+if ($modeChoice -eq "3" -and -not $useDocker) {
+    $modeArg = "--yolo"
+} else {
+    $modeArg = ""
 }
 
 Write-Host ""
@@ -108,7 +108,11 @@ Write-Host "  Launching DeepSeek TUI"                    -ForegroundColor Green
 if ($modeChoice -eq "1") {
     Write-Host "    Mode:    Agent (press Tab for Plan)"     -ForegroundColor White
 } elseif ($modeChoice -eq "3") {
-    Write-Host "    Mode:    YOLO"                           -ForegroundColor White
+    if ($useDocker) {
+        Write-Host "    Mode:    Agent (press Tab for YOLO)"   -ForegroundColor White
+    } else {
+        Write-Host "    Mode:    YOLO"                           -ForegroundColor White
+    }
 } else {
     Write-Host "    Mode:    Agent"                          -ForegroundColor White
 }
