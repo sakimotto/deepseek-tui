@@ -137,7 +137,20 @@ at the top, so you always know which project the agent sees.
 Navigate to any project in File Explorer, then double-click `launch.bat`
 from wherever you saved it. The TUI opens with that project as the workspace.
 
-You'll see three simple questions:
+You'll see an action menu first:
+
+```
+  Pick an action:
+    1. Launch TUI
+    2. Setup this PC (recommended first run)
+    3. Doctor (verify setup)
+    4. Login / change API key
+    5. Update deepseek
+```
+
+On your first run on a new PC, pick **2** (Setup). After that, pick **1** (Launch).
+
+When you pick Launch, you'll see three simple questions:
 
 ```
   ========================================

@@ -3,12 +3,62 @@
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $currentDir = Get-Location
 
+$deepseekExe = "$env:APPDATA\npm\node_modules\deepseek-tui\bin\downloads\deepseek.exe"
+$deepseekAlt = "$env:APPDATA\npm\deepseek.cmd"
+$deepseekCmd = "deepseek"
+
+if (Test-Path $deepseekExe) {
+    $deepseekCmd = $deepseekExe
+} elseif (Test-Path $deepseekAlt) {
+    $deepseekCmd = $deepseekAlt
+}
+
 Write-Host ""
 Write-Host "  ========================================" -ForegroundColor Cyan
 Write-Host "       DeepSeek TUI Launcher"               -ForegroundColor Cyan
 Write-Host "  ========================================" -ForegroundColor Cyan
 Write-Host "  Workspace: $currentDir"                   -ForegroundColor DarkGray
 Write-Host ""
+
+Write-Host "  Pick an action:" -ForegroundColor Yellow
+Write-Host "    1. Launch TUI"
+Write-Host "    2. Setup this PC (recommended first run)"
+Write-Host "    3. Doctor (verify setup)"
+Write-Host "    4. Login / change API key"
+Write-Host "    5. Update deepseek"
+Write-Host ""
+$actionChoice = Read-Host "  Enter 1, 2, 3, 4, or 5"
+
+if ($actionChoice -eq "2") {
+    & $deepseekCmd setup --tools --plugins
+    & $deepseekCmd mcp init
+    & $deepseekCmd config set default_text_model auto
+    & $deepseekCmd config set reasoning_effort auto
+    & $deepseekCmd config set mcp_config_path "~/.deepseek/mcp.json"
+    & $deepseekCmd config set features.shell_tool true
+    & $deepseekCmd config set features.subagents true
+    & $deepseekCmd config set features.web_search true
+    & $deepseekCmd config set features.apply_patch true
+    & $deepseekCmd config set features.mcp true
+    & $deepseekCmd config set features.exec_policy true
+    & $deepseekCmd doctor
+    exit $LASTEXITCODE
+}
+
+if ($actionChoice -eq "3") {
+    & $deepseekCmd doctor
+    exit $LASTEXITCODE
+}
+
+if ($actionChoice -eq "4") {
+    & $deepseekCmd auth set --provider deepseek
+    exit $LASTEXITCODE
+}
+
+if ($actionChoice -eq "5") {
+    & $deepseekCmd update
+    exit $LASTEXITCODE
+}
 
 Write-Host "  Pick a mode:" -ForegroundColor Yellow
 Write-Host "    1. Plan   - Read-only, explore only (Tab to cycle in TUI)"
@@ -73,16 +123,6 @@ Write-Host ""
 
 $cliArgs = @('--model', $modelName)
 if ($modeArg) { $cliArgs += $modeArg }
-
-$deepseekExe = "$env:APPDATA\npm\node_modules\deepseek-tui\bin\downloads\deepseek.exe"
-$deepseekAlt = "$env:APPDATA\npm\deepseek.cmd"
-$deepseekCmd = "deepseek"
-
-if (Test-Path $deepseekExe) {
-    $deepseekCmd = $deepseekExe
-} elseif (Test-Path $deepseekAlt) {
-    $deepseekCmd = $deepseekAlt
-}
 
 $envFile = "$scriptDir\.env"
 if (-not (Test-Path $envFile)) {
