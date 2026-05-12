@@ -347,7 +347,8 @@ questions and launches with the right flags. No commands to memorize:
 ```
 
 Double-click `launch.bat` for the same experience. See [docs/TEAM_GUIDE.md](docs/TEAM_GUIDE.md)
-for full team setup instructions, lessons learned, and troubleshooting.
+for full team setup instructions, first-run standardization, and diagrams of the
+hybrid workflow (native vs Docker).
 
 ---
 

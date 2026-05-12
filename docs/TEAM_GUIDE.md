@@ -186,6 +186,46 @@ When you pick Launch, you'll see three simple questions:
 
 ---
 
+## Diagrams (How It All Fits Together)
+
+### Diagram 1: First Run vs Daily Use
+
+```mermaid
+flowchart TD
+  A[Install deepseek-tui via npm] --> B[Set API key: deepseek auth set]
+  B --> C[Run launcher once: Action 2 Setup this PC]
+  C --> D[Daily work: cd into your project folder]
+  D --> E[Launch: deepseek --model auto OR launcher Action 1]
+  E --> F[Inside TUI: Tab cycles Plan/Agent/YOLO]
+  F --> G[@file mentions, / commands, tools]
+```
+
+### Diagram 2: Hybrid Runtime Decision (Native vs Docker)
+
+```mermaid
+flowchart TD
+  A[What are you doing?] -->|Normal coding| B[Native Windows]
+  A -->|Full autonomy needed| C{YOLO mode?}
+  C -->|Yes| D[Docker runtime]
+  C -->|No| B
+  B --> E[Fast startup, no sandbox]
+  D --> F[Sandboxed shell + safer YOLO]
+```
+
+### Diagram 3: Team Consistency (What “Setup this PC” Does)
+
+```mermaid
+flowchart TD
+  A[Team member runs launcher Action 2] --> B[Creates tools + plugins folders]
+  A --> C[Initializes MCP config: ~/.deepseek/mcp.json]
+  A --> D[Sets defaults: model=auto, reasoning=auto]
+  A --> E[Enables core features: shell/subagents/web/apply_patch/mcp/exec_policy]
+  B --> F[Same capabilities across team PCs]
+  C --> F
+  D --> F
+  E --> F
+```
+
 ## First Run: Try These
 
 Once the TUI opens, type these to get a feel for it:
