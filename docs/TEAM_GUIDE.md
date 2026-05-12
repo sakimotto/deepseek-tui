@@ -5,6 +5,26 @@
 
 ---
 
+## ⚡ Kun Jo — Quick Start (Skip to This)
+
+Kun Jo, here's all you need — copy these 4 lines into PowerShell, one by one:
+
+```powershell
+npm install -g deepseek-tui
+deepseek auth set --provider deepseek
+git clone https://github.com/sakimotto/deepseek-tui.git
+powershell -File "deepseek-tui\launch.ps1"
+```
+
+Then pick:
+- **2** (Setup this PC) — first time only
+- **4** (Login) — paste your DeepSeek API key
+- **1** (Launch) — every day after setup
+
+That's it. If anything goes wrong, pick **3** (Doctor) and send me the output. — [Hmbown](https://github.com/sakimotto)
+
+---
+
 ## Before You Start
 
 You need these on your PC:

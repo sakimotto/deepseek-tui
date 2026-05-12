@@ -2,6 +2,19 @@
 
 > Terminal coding agent for DeepSeek V4. It runs from the `deepseek` command, streams reasoning blocks, edits local workspaces with approval gates, and includes an auto mode that chooses both model and thinking level per turn.
 
+### 👋 Kun Jo — Start Here
+
+```powershell
+npm install -g deepseek-tui
+deepseek auth set --provider deepseek
+git clone https://github.com/sakimotto/deepseek-tui.git
+powershell -File "deepseek-tui\launch.ps1"
+```
+
+Then pick **2 > 4 > 1** in the menu. Full guide: [TEAM_GUIDE.md](docs/TEAM_GUIDE.md)
+
+---
+
 [简体中文 README](README.zh-CN.md)
 
 ## Install
