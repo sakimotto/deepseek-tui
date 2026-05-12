@@ -136,7 +136,7 @@ if ($useDocker) {
         -v "${currentDir}:/workspace" `
         -w /workspace `
         ghcr.io/hmbown/deepseek-tui:latest `
-        deepseek $cliArgs
+        $cliArgs
 } else {
     & $deepseekCmd $cliArgs
 }
