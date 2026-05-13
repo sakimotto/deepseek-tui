@@ -490,3 +490,58 @@ Sessions survive reboots, crashes, and restarts.
 - This repo contains the launcher and docs only — each team member installs `deepseek` separately via npm
 - Consider pre-configuring a project `.env` file with non-secret settings (never include keys!)
 - The `deepseek serve --http` command enables headless agent workflows for CI/CD
+
+---
+
+## 🤖 Making DeepSeek TUI Smarter — Skills, Hooks & Memory
+
+We've bundled custom **agent skills**, **lifecycle hooks**, and **user memory** to make the TUI dramatically more capable for full-stack work and safer against data loss.
+
+### What's in this repo
+
+| File | What it does |
+|------|-------------|
+| `skills/team-workflow/SKILL.md` | Standardized dev workflow (pre-flight, branching, testing, code quality) |
+| `skills/session-saver/SKILL.md` | Auto-checkpoint agent — saves work, prevents data loss, recovers from crashes |
+| `skills/session-recovery/SKILL.md` | Recovery wizard — exact commands to restore lost sessions and files |
+| `docs/CONFIG_TEAM.md` | Hooks config for auto-save + memory setup |
+
+### How skills work
+
+Skills are instruction packs the model can activate itself. When your description matches what the agent needs to do (e.g. "recover my session"), it calls `load_skill` and follows the instructions. No configuration needed — the skills in this repo's `skills/` folder are discovered automatically when DeepSeek TUI runs from this workspace.
+
+### How to use session recovery (the short version)
+
+```
+"my session crashed — recover my work"
+"save everything before we continue"
+"what did I change in the last session?"
+"is my work safe right now?"
+```
+
+The `session-saver` skill auto-commits a git checkpoint and the `session-recovery` skill walks you through resuming your lost session.
+
+### Enabling hooks (auto-checkpoint on every session)
+
+Copy the hooks section from [docs/CONFIG_TEAM.md](docs/CONFIG_TEAM.md) into `~\.deepseek\config.toml`. Once active:
+- Every session start auto-commits WIP
+- Every shell command auto-commits a checkpoint first
+- Every tool execution is logged to an audit trail
+
+### Enabling user memory (persistent preferences)
+
+Add to `~\.deepseek\config.toml`:
+```toml
+[memory]
+enabled = true
+```
+
+Or type `# remember to checkpoint before destructive operations` in the TUI composer.
+
+### Why this is powerful
+
+DeepSeek TUI + our skills/hooks/memory = a **self-saving, self-recovering agentic platform**:
+- The agent knows your team's coding standards (via `team-workflow`)
+- It auto-saves work so crashes don't lose anything (via `session-saver` + hooks)
+- It can walk you through recovery step-by-step (via `session-recovery`)
+- Preferences persist across sessions (via `memory`)
