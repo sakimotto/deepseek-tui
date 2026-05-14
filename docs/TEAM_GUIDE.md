@@ -152,6 +152,24 @@ powershell -File C:\path\to\deepseek-tui\launch.ps1   # Full menu picker
 The launcher now works from **any folder**. It shows which workspace you're in
 at the top, so you always know which project the agent sees.
 
+### Step 5a: Alias for one-command launch (do once)
+
+From any project folder, you can launch with just **two letters**. Run this ONCE:
+
+```powershell
+$profileDir = Split-Path $PROFILE -Parent
+if (-not (Test-Path $profileDir)) { New-Item -ItemType Directory -Path $profileDir -Force }
+Add-Content -Path $PROFILE -Value 'function ds { powershell -File "D:\OneDrive - Zervi Asia Co., Ltd\Desktop\Git-Projects\httpsgithub.comHmbownDeepSeek-TUI.git\DeepSeek-TUI\launch.ps1" }'
+```
+
+Close PowerShell and reopen. Now from **any folder**, just type:
+
+```powershell
+ds
+```
+
+The menu opens. Pick and go. No paths, no cd, no memorization.
+
 ### Easy way (recommended)
 
 Navigate to any project in File Explorer, then double-click `launch.bat`
@@ -481,6 +499,47 @@ Sessions survive reboots, crashes, and restarts.
 5. **Rotate keys regularly** — `deepseek auth set --provider deepseek` makes it easy
 6. **Compact long sessions** — type `/compact` when the agent gets slow
 7. **Ask for explanations** — the agent is great at explaining code, not just writing it
+8. **Start fresh sessions** — close the TUI (`Ctrl+C`) after each task. Sessions auto-save. Resume with `deepseek --continue` or `deepseek --resume <ID>` for old work.
+9. **Use `ds` shortcut** — after setup, type `ds` from any project folder to launch the menu picker (see [Setup](#step-5-alias-for-one-command-launch))
+
+---
+
+## ⚡ Performance & Lag Fixes
+
+### Typing lag in the TUI?
+
+This happens when sessions have 500+ messages. The transcript tries to re-render on every keystroke.
+
+**Fix (inside the TUI):**
+```
+/compact
+```
+This compresses old messages into a summary. Typing becomes smooth instantly.
+
+**Prevention:**
+- Start a fresh session (`deepseek --model auto`) for each major task
+- Don't run one session for days with hundreds of messages
+- Use **Windows Terminal** (free from Microsoft Store) — it's hardware-accelerated and much faster than the old blue PowerShell console
+- If the lag is extreme, close the TUI (`Ctrl+C`) and resume: `deepseek --continue`
+
+### Session sizes to watch
+
+| Session size | Performance | What to do |
+|---|---|---|
+| < 200 msgs | ✅ Fast | Normal |
+| 200–500 msgs | ⚠️ Noticeable | `/compact` recommended |
+| 500+ msgs | ❌ Laggy | `/compact` immediately |
+| 1000+ msgs | ❌❌ Very slow | Close TUI, start fresh |
+
+### Known Windows fixes
+
+| Issue | Fix |
+|-------|-----|
+| `cd` failing on paths with spaces | Wrap in quotes: `cd "D:\OneDrive - ..."` |
+| `deepseek resume --last` not working | Use `deepseek --resume <ID>` instead (Windows path format issue) |
+| `.\launch.ps1` not recognized | You're not in the right folder — use `powershell -File "full\path\to\launch.ps1"` from anywhere |
+| API key showing as "a" in config | Run `deepseek auth set --provider deepseek` to re-save it |
+| Auto model shows auth error on doctor | Normal — doctor sends `model: auto` to API directly; the TUI handles routing internally |
 
 ---
 
