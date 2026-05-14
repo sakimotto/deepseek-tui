@@ -501,6 +501,61 @@ Sessions survive reboots, crashes, and restarts.
 7. **Ask for explanations** — the agent is great at explaining code, not just writing it
 8. **Start fresh sessions** — close the TUI (`Ctrl+C`) after each task. Sessions auto-save. Resume with `deepseek --continue` or `deepseek --resume <ID>` for old work.
 9. **Use `ds` shortcut** — after setup, type `ds` from any project folder to launch the menu picker (see [Setup](#step-5-alias-for-one-command-launch))
+10. **Always hand off properly** — before you log off, type `"logoff"` in the TUI. The `handoff` skill creates a HANDOVER.md, commits everything, creates a backup branch, and pushes to git. The next agent (or you tomorrow) just types `@HANDOVER.md` to continue exactly where you left off.
+
+---
+
+## 🔄 Session Handoff — Log Off Without Losing Anything
+
+When you're done working, just type **"logoff"** in the TUI. The `handoff` skill does this automatically:
+
+```
+You: "logoff"
+
+Agent (auto):
+  ✅ Git status audited — 3 files modified
+  ✅ HANDOVER.md created with:
+     - What was done this session
+     - What still needs doing
+     - Current branch + last commit
+     - Instructions for the next agent
+  ✅ All changes committed: "handoff: session wrap-up"
+  ✅ Backup branch created: backup/handoff-20260513-180000
+  ✅ Pushed to origin/main
+
+  ⏭️ Next session:
+     deepseek --continue
+     @HANDOVER.md
+```
+
+### What HANDOVER.md contains
+
+| Section | Purpose |
+|---------|---------|
+| Session Summary | What was accomplished this session |
+| Outstanding Work | What still needs to be done (with priorities) |
+| Current State | Branch, last commit, test status, build status |
+| Files Modified | List of every file changed |
+| Instructions | Exact commands the next agent should run |
+| Git Status | Raw git status at handoff time |
+| Recovery | Backup branch name, last known good commit |
+
+### Failsafes (so it never loses your work)
+
+- HANDOVER.md is written FIRST, before any git operation
+- A backup branch is created so you can always roll back
+- Works even if the project isn't a git repo (skips git, writes HANDOVER.md only)
+- Works even if there's no remote configured (skips push, warns you)
+- Never overwrites — if HANDOVER.md exists, creates HANDOVER-20260513.md instead
+
+### Trigger phrases (say any of these)
+
+- `"logoff"` / `"I'm logging off"`
+- `"wrap up"` / `"let's wrap up"`
+- `"hand over"` / `"create handover"`
+- `"I'm done for today"` / `"end of day"`
+- `"switch computers"` / `"continue on another PC"`
+- `"save and quit"` / `"commit and push everything"`
 
 ---
 
@@ -563,6 +618,7 @@ We've bundled custom **agent skills**, **lifecycle hooks**, and **user memory** 
 | `skills/team-workflow/SKILL.md` | Standardized dev workflow (pre-flight, branching, testing, code quality) |
 | `skills/session-saver/SKILL.md` | Auto-checkpoint agent — saves work, prevents data loss, recovers from crashes |
 | `skills/session-recovery/SKILL.md` | Recovery wizard — exact commands to restore lost sessions and files |
+| `skills/handoff/SKILL.md` | Session wrap-up — creates HANDOVER.md, commits all work, creates backup branch, pushes to git, leaves instructions for next agent |
 | `docs/CONFIG_TEAM.md` | Hooks config for auto-save + memory setup |
 
 ### How skills work
@@ -599,8 +655,9 @@ Or type `# remember to checkpoint before destructive operations` in the TUI comp
 
 ### Why this is powerful
 
-DeepSeek TUI + our skills/hooks/memory = a **self-saving, self-recovering agentic platform**:
+DeepSeek TUI + our skills/hooks/memory = a **self-saving, self-recovering, self-documenting agentic platform**:
 - The agent knows your team's coding standards (via `team-workflow`)
 - It auto-saves work so crashes don't lose anything (via `session-saver` + hooks)
 - It can walk you through recovery step-by-step (via `session-recovery`)
+- It creates clean handoff documents so anyone can continue your work (via `handoff`)
 - Preferences persist across sessions (via `memory`)

@@ -59,3 +59,8 @@ When resuming a session:
 - "is my work safe" → verify no uncommitted changes exist
 - "commit everything" → add all, commit with descriptive message
 - "clean up" → check for temp files, orphaned branches, stash cleanup
+
+## End-of-session handoff
+When the user signals they're done working ("logoff", "hand over", "wrap up", "I'm done", "switch computers"), **delegate to the `handoff` skill** — it creates a comprehensive HANDOVER.md, commits all work, creates a backup branch, pushes to git, and gives the next agent clear instructions.
+
+To activate: `load_skill name=handoff`
